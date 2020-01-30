@@ -61,24 +61,30 @@ namespace sig {
   class Signal {
   public:
     // result of combiner
-    using result_type = /* implementation defined */;
-
+    using result_type = void;
+    
     // constructor
     Signal(Combiner combiner = Combiner()) {
-
+		std::vector<std::function<combiner>> save;
     }
 
     // connect the function to the signal and returns an id
     template<typename Func>
     std::size_t connectSlot(Func callback) {
+		save.push_back(callback);
     }
 
     // disconnect the function represented by the id
     void disconnectSlot(std::size_t id) {
+		save.erase(save.begin()+id);
     }
 
     // emit a signal, call all the slots
-    result_type emitSignal(/* arguments of the signature */ args) {
+    result_type emitSignal(int args) {
+		for(size_t i = 0; i < save.size(); i++){
+			save[i](args);
+		}
+		return 
     }
   };
 
