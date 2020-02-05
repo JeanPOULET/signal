@@ -332,6 +332,9 @@ TEST(sigTest, Test_UnParamIntReturnIntVectorCombiner){
 	EXPECT_EQ(9, res[1]);
 }
 
+														/*********************************************************
+														 *					TEST PLEIN DE FONCTIONS				 *
+														 * *******************************************************/
 TEST(lotFuncs, Test_PleinsFonctions){
   	sig::Signal<int(),sig::LastCombiner<int>> sig;
 	std::function<int ()> funct1 = [] (){return -2;};
