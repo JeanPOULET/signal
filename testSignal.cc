@@ -187,7 +187,6 @@ TEST(sigTest, Test_UnParamStringReturnIntLastCombiner){
     sig.connectSlot(funct);
 	res = sig.emitSignal(str);
 	EXPECT_EQ(5, res);
-<<<<<<< HEAD
 }
 
 TEST(sigTest, Test_DeuxParamCharReturnIntLastCombiner){
@@ -288,13 +287,19 @@ TEST(sigTest, Test_DeuxParamStringIntReturnIntLastCombiner){
 														 * *******************************************************/
 
 
-TEST(sigTest, Test_UnParamReturnIntVectorCombiner){
-  	sig::Signal<int(),sig::LastCombiner<int>> sig;
+TEST(sigTest, Test_ZeroParamReturnIntVectorCombiner){
+  	sig::Signal<int(),sig::VectorCombiner<int>> sig;
 	std::function<int ()> funct = [] (){return 5;};
-	int res;
+	std::function<int ()> funct1 = [] (){return 55;};
+	std::vector<int> res;
+
     sig.connectSlot(funct);
+	sig.connectSlot(funct1);
+
 	res = sig.emitSignal();
-	EXPECT_EQ(5, res);
+
+	EXPECT_EQ(5, res[0]);
+	EXPECT_EQ(55, res[1]);
 }
 
 TEST(sigTest, Test_UnParamCharReturnIntVectorCombiner){
@@ -302,145 +307,29 @@ TEST(sigTest, Test_UnParamCharReturnIntVectorCombiner){
 	std::function<int (char)> funct = [] (char arg){return arg+5;};
 	std::function<int (char)> funct1 = [] (char arg){return arg+4;};
 	std::vector<int> res;
+
     sig.connectSlot(funct);
 	sig.connectSlot(funct1);
+
 	res = sig.emitSignal('Y');
 
 	EXPECT_EQ('Y'+5, res[0]);
 	EXPECT_EQ('Y'+4, res[1]);
 }
-/*
-TEST(sigTest, Test_UnParamIntReturnIntLastCombiner){
-  	sig::Signal<int(int),sig::LastCombiner<int>> sig;
+
+TEST(sigTest, Test_UnParamIntReturnIntVectorCombiner){
+  	sig::Signal<int(int),sig::VectorCombiner<int>> sig;
 	std::function<int (int)> funct = [] (int arg){return arg+5;};
-	int res;
+	std::function<int (int)> funct1 = [] (int arg){return arg+4;};
+	std::vector<int> res;
+	
     sig.connectSlot(funct);
+	sig.connectSlot(funct1);
+
 	res = sig.emitSignal(5);
-	EXPECT_EQ(5+5, res);
-}
 
-TEST(sigTest, Test_UnParamDoubleReturnIntLastCombiner){
-  	sig::Signal<int(double),sig::LastCombiner<int>> sig;
-	std::function<int (double)> funct = [] (double arg){return arg+5;};
-	int res;
-    sig.connectSlot(funct);
-	res = sig.emitSignal(4.2);
-	EXPECT_EQ(9, res);
-}
-
-TEST(sigTest, Test_UnParamBoolReturnIntLastCombiner){
-  	sig::Signal<int(bool),sig::LastCombiner<int>> sig;
-	std::function<int (bool)> funct = [] (bool arg){if(arg){return 5;} return 0;};
-	int res;
-    sig.connectSlot(funct);
-	res = sig.emitSignal(true);
-	EXPECT_EQ(5, res);
-}
-
-TEST(sigTest, Test_UnParamStringReturnIntLastCombiner){
-  	sig::Signal<int(std::string),sig::LastCombiner<int>> sig;
-	std::function<int (std::string)> funct = [] (std::string arg){if(arg == "cc"){return 5;}return 0;};
-	int res;
-	std::string str = "cc";
-    sig.connectSlot(funct);
-	res = sig.emitSignal(str);
-	EXPECT_EQ(5, res);
-}
-
-TEST(sigTest, Test_DeuxParamCharReturnIntLastCombiner){
-  	sig::Signal<int(char, char),sig::LastCombiner<int>> sig;
-	std::function<int (char, char)> funct = [] (char arg, char arg2){return arg+arg2;};
-	int res;
-    sig.connectSlot(funct);
-	res = sig.emitSignal('Y', 'Z');
-	EXPECT_EQ('Y'+'Z', res);
-}
-
-TEST(sigTest, Test_DeuxParamCharIntReturnIntLastCombiner){
-  	sig::Signal<int(char, int),sig::LastCombiner<int>> sig;
-	std::function<int (char, int)> funct = [] (char arg, int arg2){return arg+arg2;};
-	int res;
-    sig.connectSlot(funct);
-	res = sig.emitSignal('Y', 5);
-	EXPECT_EQ('Y'+5, res);
-}
-
-TEST(sigTest, Test_DeuxParamIntReturnIntLastCombiner){
-  	sig::Signal<int(int, int),sig::LastCombiner<int>> sig;
-	std::function<int (int, int)> funct = [] (int arg, int arg2){return arg+arg2;};
-	int res;
-    sig.connectSlot(funct);
-	res = sig.emitSignal(5, 5);
-	EXPECT_EQ(5+5, res);
-}
-
-TEST(sigTest, Test_DeuxParamIntBoolReturnIntLastCombiner){
-  	sig::Signal<int(int, bool),sig::LastCombiner<int>> sig;
-	std::function<int (int, bool)> funct = [] (int arg, bool arg2){if(arg2){return arg+5;}return 0;};
-	int res;
-    sig.connectSlot(funct);
-	res = sig.emitSignal(5, true);
-	EXPECT_EQ(5+5, res);
-}
-
-TEST(sigTest, Test_DeuxParamDoubleReturnIntLastCombiner){
-  	sig::Signal<int(double, double),sig::LastCombiner<int>> sig;
-	std::function<int (double, double)> funct = [] (double arg, double arg2){return arg+arg2;};
-	int res;
-    sig.connectSlot(funct);
-	res = sig.emitSignal(4.2, 2.4);
-	EXPECT_EQ(4+2, res);
-}
-
-TEST(sigTest, Test_DeuxParamDoubleBoolReturnIntLastCombiner){
-  	sig::Signal<int(double, bool),sig::LastCombiner<int>> sig;
-	std::function<int (double, bool)> funct = [] (double arg, bool arg2){if(!arg2){return arg+5;}return arg;};
-	int res;
-    sig.connectSlot(funct);
-	res = sig.emitSignal(4.2, false);
-	EXPECT_EQ(9, res);
-}
-
-TEST(sigTest, Test_DeuxParamBoolReturnIntLastCombiner){
-  	sig::Signal<int(bool, bool),sig::LastCombiner<int>> sig;
-	std::function<int (bool, bool)> funct = [] (bool arg, bool arg2){if(arg && arg2){return 5;} return 0;};
-	int res;
-    sig.connectSlot(funct);
-	res = sig.emitSignal(true, true);
-	EXPECT_EQ(5, res);
-}
-
-TEST(sigTest, Test_DeuxParamBoolIntReturnIntLastCombiner){
-  	sig::Signal<int(bool, int),sig::LastCombiner<int>> sig;
-	std::function<int (bool, int)> funct = [] (bool arg, int arg2){if(arg){return arg2;} return 0;};
-	int res;
-    sig.connectSlot(funct);
-	res = sig.emitSignal(true, 5);
-	EXPECT_EQ(5, res);
-}
-
-TEST(sigTest, Test_DeuxParamStringReturnIntLastCombiner){
-  	sig::Signal<int(std::string, std::string),sig::LastCombiner<int>> sig;
-	std::function<int (std::string, std::string)> funct = [] (std::string arg, std::string arg2){if(arg == "cc" && arg2 == "bb"){return 5;}return 0;};
-	int res;
-	std::string str = "cc";
-	std::string str2 = "bb";
-    sig.connectSlot(funct);
-	res = sig.emitSignal(str, str2);
-	EXPECT_EQ(5, res);
-}
-
-TEST(sigTest, Test_DeuxParamStringIntReturnIntLastCombiner){
-  	sig::Signal<int(std::string, int),sig::LastCombiner<int>> sig;
-	std::function<int (std::string, int)> funct = [] (std::string arg, int arg2){if(arg == "cc"){return arg2;}return 0;};
-	int res;
-	std::string str = "cc";
-    sig.connectSlot(funct);
-	res = sig.emitSignal(str, 5);
-	EXPECT_EQ(5, res);
-}
-*/
-=======
+	EXPECT_EQ(10, res[0]);
+	EXPECT_EQ(9, res[1]);
 }
 
 TEST(lotFuncs, Test_PleinsFonctions){
@@ -474,7 +363,6 @@ TEST(lotFuncs, Test_PleinsFonctions_retourVoid){
 	sig.emitSignal(16);
 }
 
->>>>>>> a1cd6d29781e4b8458db462f746e7a488cfd12e8
 int main(int argc, char* argv[]) {
   	::testing::InitGoogleTest(&argc, argv);
   	return RUN_ALL_TESTS();
