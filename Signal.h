@@ -32,14 +32,14 @@ namespace sig {
 	class LastCombiner {
 		public:
 		using result_type = T;
-
+		result_type res;
 		template<typename U>
 		void combine(U&& item) {
-
+			res = item;
 		}
 
 		result_type result() {
-			
+			return res;
 		}
 	};
 
@@ -53,7 +53,7 @@ namespace sig {
 		std::vector<T> vec;
 		template<typename U>
 		void combine(U&& item) {
-
+			vec.push_back(item);
 		}
 
 		result_type result() {
