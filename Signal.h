@@ -6,6 +6,7 @@
 #include <vector>
 #include <functional>
 #include <map>
+#include <iostream>
 
 namespace sig {
 
@@ -85,7 +86,8 @@ namespace sig {
 		template<typename Func>
 		std::size_t connectSlot(Func callback) {
 			save.insert(std::pair<std::size_t,Func>(act_id,callback));
-			return save.size();
+			act_id++;
+			return act_id-1;
 		}
 
 		// disconnect the function represented by the id
@@ -96,8 +98,8 @@ namespace sig {
 		// emit a signal, call all the slots
 		result_type emitSignal(Args ...args) {
 
-			for(size_t i=0; i<save.size();++i){
-				R item = save[i](args...);
+			for(auto it = save.begin(); it != save.end(); it++){
+				R item = it->second(args...);
 				combin.combine(item);
 			}
 
@@ -138,8 +140,8 @@ namespace sig {
 		// emit a signal, call all the slots
 		result_type emitSignal(Args ...args) {
 
-			for(size_t i=0; i<save.size();++i){
-				save[i](args...);
+			for(auto it = save.begin(); it != save.end(); it++){
+				it->second(args...);
 			}
 		}
   	};

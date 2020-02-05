@@ -187,6 +187,7 @@ TEST(sigTest, Test_UnParamStringReturnIntLastCombiner){
     sig.connectSlot(funct);
 	res = sig.emitSignal(str);
 	EXPECT_EQ(5, res);
+<<<<<<< HEAD
 }
 
 TEST(sigTest, Test_DeuxParamCharReturnIntLastCombiner){
@@ -439,6 +440,41 @@ TEST(sigTest, Test_DeuxParamStringIntReturnIntLastCombiner){
 	EXPECT_EQ(5, res);
 }
 */
+=======
+}
+
+TEST(lotFuncs, Test_PleinsFonctions){
+  	sig::Signal<int(),sig::LastCombiner<int>> sig;
+	std::function<int ()> funct1 = [] (){return -2;};
+	std::function<int ()> funct2 = [] (){return 4;};
+	std::function<int ()> funct3 = [] (){return 3;};
+	std::function<int ()> funct4 = [] (){return 16;};
+	int res;
+
+    sig.connectSlot(funct1);
+	sig.connectSlot(funct2);
+	sig.connectSlot(funct3);
+	sig.connectSlot(funct4);
+	res = sig.emitSignal();
+	EXPECT_EQ(16, res);
+}
+
+TEST(lotFuncs, Test_PleinsFonctions_retourVoid){
+  	sig::Signal<void(int),sig::DiscardCombiner> sig;
+	std::function<void (int)> funct1 = [] (int s){std::cout<<s<<"\n";};
+	std::function<void (int)> funct2 = [] (int s){std::cout<<s+1<<"\n";};
+	std::function<void (int)> funct3 = [] (int s){std::cout<<s+2<<"\n";};
+	std::function<void (int)> funct4 = [] (int s){std::cout<<s+3<<"\n";};
+	int res;
+
+    sig.connectSlot(funct1);
+	sig.connectSlot(funct2);
+	sig.connectSlot(funct3);
+	sig.connectSlot(funct4);
+	sig.emitSignal(16);
+}
+
+>>>>>>> a1cd6d29781e4b8458db462f746e7a488cfd12e8
 int main(int argc, char* argv[]) {
   	::testing::InitGoogleTest(&argc, argv);
   	return RUN_ALL_TESTS();
