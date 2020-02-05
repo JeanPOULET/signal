@@ -2,6 +2,7 @@
 #define SIGNAL_H
 
 #include <type_traits>
+#include <string>
 #include <vector>
 #include <functional>
 #include <map>

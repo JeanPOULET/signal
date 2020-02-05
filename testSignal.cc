@@ -1,24 +1,58 @@
 #include "Signal.h"
-
 #include <iostream>
-
 #include <gtest/gtest.h>
 
-int printou(char arg){
-  	printf("CC CV LM : %d\n",arg);
-    return 4;
+																			/*********************************************************
+																			 * 						TEST VOID						 *
+																			 * *******************************************************/
+
+TEST(sigTest, Test_UnParamCharReturnVoidDiscardCombiner){
+  	sig::Signal<void(char),sig::DiscardCombiner> sig;
+	std::function<void (char)> funct = [] (char arg){std::cout<<arg<<"\n";};
+    sig.connectSlot(funct);
+	sig.emitSignal('Y');
 }
 
-void squeezie(char arg, int jose){
-  std::cout<<"SAlut à tous c'est SQU"<<arg<<"ZIE j'espère que vous alleral + = "<< jose <<"  !!!\n";
+TEST(sigTest, Test_UnParamIntReturnVoidDiscardCombiner){
+  	sig::Signal<void(char),sig::DiscardCombiner> sig;
+	std::function<void (int)> funct = [] (int arg){std::cout<<arg<<"\n";};
+    sig.connectSlot(funct);
+	sig.emitSignal(42);
 }
 
-TEST(sigTest, firstTest){
-  	sig::Signal<void(char,int),sig::DiscardCombiner> sig;
-  	//sig.connectSlot(printou);
-    sig.connectSlot(squeezie);
-	  sig.emitSignal('b',42);
+TEST(sigTest, Test_UnParamDoubleReturnVoidDiscardCombiner){
+  	sig::Signal<void(char),sig::DiscardCombiner> sig; 
+	std::function<void (double)> funct = [] (double arg){std::cout<<arg<<"\n";};
+    sig.connectSlot(funct);
+	sig.emitSignal(42.42);
 }
+
+TEST(sigTest, Test_UnParamBoolReturnVoidDiscardCombiner){
+  	sig::Signal<void(char),sig::DiscardCombiner> sig;
+	std::function<void (bool)> funct = [] (bool arg){std::cout<<arg<<"\n";};
+    sig.connectSlot(funct);
+	sig.emitSignal(true);
+}
+/*
+TEST(sigTest, Test_UnParamStringReturnVoidDiscardCombiner){
+  	sig::Signal<void(char),sig::DiscardCombiner> sig;
+	std::function<void (std::string)> funct = [] (std::string arg){std::cout<<arg<<"\n";};
+    sig.connectSlot(funct);
+	std::string str = "Carotte";
+	sig.emitSignal(str);
+}
+
+TEST(sigTest, Test_UnParamVectorReturnVoidDiscardCombiner){
+  	sig::Signal<void(char),sig::DiscardCombiner> sig;
+	std::function<void (std::vector<int>)> funct = [] (std::vector<int> arg){std::cout<<arg<<"\n";};
+    sig.connectSlot(funct);
+	std::vector<int> vec = {5, 6,7};
+	sig.emitSignal(vec);
+}
+*/
+
+
+
 
 int main(int argc, char* argv[]) {
   	::testing::InitGoogleTest(&argc, argv);
