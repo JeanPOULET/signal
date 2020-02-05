@@ -195,13 +195,40 @@ TEST(lotFuncs, Test_PleinsFonctions_retourVoid){
 	std::function<void (int)> funct2 = [] (int s){std::cout<<s+1<<"\n";};
 	std::function<void (int)> funct3 = [] (int s){std::cout<<s+2<<"\n";};
 	std::function<void (int)> funct4 = [] (int s){std::cout<<s+3<<"\n";};
-	int res;
-
     sig.connectSlot(funct1);
 	sig.connectSlot(funct2);
 	sig.connectSlot(funct3);
 	sig.connectSlot(funct4);
 	sig.emitSignal(16);
+}
+
+TEST(lotFuncs, Test_PleinsFonctions_retourPriviet){
+  	sig::Signal<int(int,int),sig::LastCombiner<int>> sig;
+	std::function<int (int,int)> funct1 = [] (int s, int ss){return s+ss+5;};
+	std::function<int (int,int)> funct2 = [] (int s, int ss){return s+ss+10;};
+	std::function<int (int,int)> funct3 = [] (int s, int ss){return s+ss+15;};
+	std::function<int (int,int)> funct4 = [] (int s, int ss){return s+ss+20;};
+    sig.connectSlot(funct1);
+	sig.connectSlot(funct2);
+	sig.connectSlot(funct3);
+	sig.connectSlot(funct4);
+	int res = sig.emitSignal(8,4);
+	EXPECT_EQ(8+4+20,res);
+}
+
+TEST(lotFuncs, Test_PleinsFonctions_retourPatchimou){
+  	sig::Signal<int(int,int),sig::VectorCombiner<int>> sig;
+	std::vector<int> vec = {8+4+5,8+4+10,8+4+15,8+4+20};
+	std::function<int (int,int)> funct1 = [] (int s, int ss){return s+ss+5;};
+	std::function<int (int,int)> funct2 = [] (int s, int ss){return s+ss+10;};
+	std::function<int (int,int)> funct3 = [] (int s, int ss){return s+ss+15;};
+	std::function<int (int,int)> funct4 = [] (int s, int ss){return s+ss+20;};
+    sig.connectSlot(funct1);
+	sig.connectSlot(funct2);
+	sig.connectSlot(funct3);
+	sig.connectSlot(funct4);
+	std::vector<int> res = sig.emitSignal(8,4);
+	EXPECT_EQ(vec,res);
 }
 
 int main(int argc, char* argv[]) {
