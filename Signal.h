@@ -62,7 +62,7 @@ namespace sig {
 		}
 	};
 
-	template< class,class Combiner = DiscardCombiner() >
+	template< class,class Combiner = DiscardCombiner >
 	class Signal;
 	/*
 	* A signal
@@ -72,15 +72,15 @@ namespace sig {
 		
 		public:
 		// result of combiner
-		using result_type = typename Combiner::result_type;
+		
 		Combiner combin;
 		std::map<std::size_t,std::function<R(Args...)>> save;
 		std::size_t act_id =0;
 		// constructor
-		Signal(Combiner combiner = DiscardCombiner()) {
+		Signal(Combiner combiner = Combiner()) {
 			combin = combiner;
 		}
-
+		using result_type = typename Combiner::result_type;
 		// connect the function to the signal and returns an id
 		template<typename Func>
 		std::size_t connectSlot(Func callback) {
