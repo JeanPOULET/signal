@@ -4,6 +4,7 @@
 #include <type_traits>
 #include <vector>
 #include <functional>
+#include <map>
 
 namespace sig {
 
@@ -15,12 +16,12 @@ namespace sig {
 		using result_type = void;
 
 		template<typename U>
-		void combine(const U&) {
-			return;
+		void combine(U&&) {
+	
 		}
 
 		result_type result() {
-			return ;
+
 		}
 	};
 
@@ -33,7 +34,7 @@ namespace sig {
 		using result_type = T;
 
 		template<typename U>
-		void combine(const U& item) {
+		void combine(U&& item) {
 
 		}
 
@@ -48,76 +49,97 @@ namespace sig {
 	template<typename T>
 	class VectorCombiner {
 		public:
-		using result_type = T;
-
+		using result_type = std::vector<T>;
+		std::vector<T> vec;
 		template<typename U>
-		void combine(const U& item) {
+		void combine(U&& item) {
 
 		}
 
 		result_type result() {
-
+			return vec;
 		}
 	};
-	template< class,class >
+
+	template< class,class Combiner = DiscardCombiner() >
 	class Signal;
 	/*
 	* A signal
 	*/
-	template<typename Signature, typename Combiner, class... Args>
-	class Signal<Signature(Args...),Combiner> {
+	template<class R, typename Combiner, class... Args>
+	class Signal<R(Args...),Combiner> {
 		
 		public:
 		// result of combiner
-		using result_type = Signature;
+		using result_type = typename Combiner::result_type;
 		Combiner combin;
-		std::vector<std::function<Signature(Args...)>> save;
-
+		std::map<std::size_t,std::function<R(Args...)>> save;
+		std::size_t act_id =0;
 		// constructor
 		Signal(Combiner combiner = DiscardCombiner()) {
 			combin = combiner;
-			//std::vector<std::function<Signature(Args)>> save;
 		}
 
 		// connect the function to the signal and returns an id
 		template<typename Func>
 		std::size_t connectSlot(Func callback) {
-			save.push_back(callback);
+			save.insert(std::pair<std::size_t,Func>(act_id,callback));
 			return save.size();
 		}
 
 		// disconnect the function represented by the id
 		void disconnectSlot(std::size_t id) {
-			save.erase(save.begin()+id);
+			save.erase(id);
 		}
 
 		// emit a signal, call all the slots
-		result_type emitSignal(int args) {
-			int resType =-1;
-			switch(combin){
-				case DiscardCombiner :
-					resType = 0;
-					void res;
-				break;
-				case VectorCombiner :
-					resType = 1;
-					std::vector<result_type> res;
-				break;
-				default :
-					resType = 2;
-					result_type res;
-				break;
+		result_type emitSignal(Args ...args) {
+
+			for(size_t i=0; i<save.size();++i){
+				R item = save[i](args...);
+				combin.combine(item);
 			}
-			for(size_t i = 0; i < save.size(); i++){
-				if(resType ==1){
-					res.push_back(save[i](args));
-				}else if (resType ==2){
-					res = save[i](args);
-				}else{
-					save[i](args);
-				}
+
+			if(!std::is_same<void,result_type>::value){
+				return combin.result();
 			}
-			return res;
+		}
+  	};
+
+	template<typename Combiner, class... Args>
+	class Signal<void(Args...),Combiner> {
+		
+		public:
+		// result of combiner
+		using result_type = typename Combiner::result_type;
+		Combiner combin;
+		std::map<std::size_t ,std::function<void(Args...)>> save;
+		std::size_t act_id =0;
+
+		// constructor
+		Signal(Combiner combiner = DiscardCombiner()) {
+			combin = combiner;
+		}
+
+		// connect the function to the signal and returns an id
+		template<typename Func>
+		std::size_t connectSlot(Func callback) {
+			save.insert({act_id,callback});
+			act_id++;
+			return act_id-1;
+		}
+
+		// disconnect the function represented by the id
+		void disconnectSlot(std::size_t id) {
+			save.erase(id);
+		}
+
+		// emit a signal, call all the slots
+		result_type emitSignal(Args ...args) {
+
+			for(size_t i=0; i<save.size();++i){
+				save[i](args...);
+			}
 		}
   	};
 
